@@ -14,55 +14,71 @@ function menuMarkUp(menuItems) {
 };
 
 /*Тема body */
-const STORAGE_THEME = 'theme';
-
-const refs = {
-    body: document.querySelector('body'),
-    switchBtn: document.querySelector('#theme-switch-toggle'),
-}
-
-refs.switchBtn.addEventListener('click', (event) => {
-    event.target.setAttribute('checked', true);
-})
+const STORAGE_THEME = 'Current theme: ';
 
 
-refs.switchBtn.addEventListener('change', (event) => {
+const Theme = {
+  LIGHT: 'light-theme',
+  DARK: 'dark-theme',
+};
 
-    darkTheme();
-    
-    lightTheme();
+const body= document.querySelector('body');
+const switchBtn = document.querySelector('#theme-switch-toggle');
+console.log(switchBtn.checked);
 
+switchBtn.addEventListener('change', (event) => {
+
+    lightThemeSwitch();
+    darkThemeSwitch();
 });
-currentTheme();
+currentThemeCheck();
 
-function darkTheme() {
-    refs.body.classList.toggle('dark-theme');
-    const theme = 'dark-theme';
-    if (refs.body.classList.contains('dark-theme')) {
+function darkThemeSwitch() {
+    const currentTheme = Theme.DARK;
+    const statusCheck = switchBtn.checked;
 
-    localStorage.setItem(STORAGE_THEME,theme)
+    body.classList.toggle(currentTheme);
+
+    let storage = {
+        'theme': currentTheme,
+        'checkbox': statusCheck,
+    };
+
+
+    if (body.classList.contains(currentTheme)) {
+
+        localStorage.setItem(STORAGE_THEME, JSON.stringify(storage));
     }
 }
 
+function lightThemeSwitch() {
+    const currentTheme = Theme.LIGHT;
+        const statusCheck = switchBtn.checked;
+    body.classList.toggle(currentTheme);
 
-function lightTheme() {
-    refs.body.classList.toggle('light-theme');
-    const theme = 'light-theme';
+    let storage = {
+        'theme': currentTheme,
+        'checkbox': statusCheck,
+    };
     
-    if (refs.body.classList.contains('light-theme')) {
-    localStorage.setItem(STORAGE_THEME,theme)
+    if (body.classList.contains(currentTheme)) {
+        localStorage.setItem(STORAGE_THEME, JSON.stringify(storage));
+        // localStorage.setItem(STORAGE_THEME, currentTheme);
     }
 }
 
 
-function currentTheme() {
+function currentThemeCheck() {
     const savedMessage = localStorage.getItem(STORAGE_THEME);
+
+    const storage = JSON.parse(savedMessage);
+    console.log(storage.theme);
 
     /*true - если в savedMessage есть значения  */
     if (savedMessage) {
-        console.log(savedMessage)
 
         /*обновляем dom - текст остается после перезагрузки если форма не отправлена*/
-        refs.body.classList.add(savedMessage);
+        body.classList.add(storage.theme);
+        switchBtn.checked = storage.checkbox;
     }
 };
