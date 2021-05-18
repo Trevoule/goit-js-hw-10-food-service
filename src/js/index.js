@@ -16,69 +16,76 @@ function menuMarkUp(menuItems) {
 /*Тема body */
 const STORAGE_THEME = 'Current theme: ';
 
-
 const Theme = {
   LIGHT: 'light-theme',
   DARK: 'dark-theme',
 };
 
-const body= document.querySelector('body');
+const body = document.querySelector('body');
+const checkBodyTheme = body.classList;
 const switchBtn = document.querySelector('#theme-switch-toggle');
-console.log(switchBtn.checked);
+const btnCheck = switchBtn.checked;
+
+currentThemeCheck();
 
 switchBtn.addEventListener('change', (event) => {
 
-    lightThemeSwitch();
+        lightThemeSwitch();
     darkThemeSwitch();
+
 });
-currentThemeCheck();
 
 function darkThemeSwitch() {
     const currentTheme = Theme.DARK;
     const statusCheck = switchBtn.checked;
-
     body.classList.toggle(currentTheme);
 
     let storage = {
         'theme': currentTheme,
-        'checkbox': statusCheck,
     };
-
-
+    
     if (body.classList.contains(currentTheme)) {
-
         localStorage.setItem(STORAGE_THEME, JSON.stringify(storage));
     }
 }
 
 function lightThemeSwitch() {
     const currentTheme = Theme.LIGHT;
-        const statusCheck = switchBtn.checked;
+    const statusCheck = switchBtn.checked;
     body.classList.toggle(currentTheme);
 
     let storage = {
         'theme': currentTheme,
-        'checkbox': statusCheck,
     };
     
     if (body.classList.contains(currentTheme)) {
         localStorage.setItem(STORAGE_THEME, JSON.stringify(storage));
-        // localStorage.setItem(STORAGE_THEME, currentTheme);
     }
 }
 
-
 function currentThemeCheck() {
-    const savedMessage = localStorage.getItem(STORAGE_THEME);
 
+    const savedMessage = localStorage.getItem(STORAGE_THEME);
     const storage = JSON.parse(savedMessage);
-    console.log(storage.theme);
+
+    checkBodyTheme.add(
+    localStorage.getItem(STORAGE_THEME) === null
+    ? Theme.LIGHT
+    : storage.theme,
+  );
 
     /*true - если в savedMessage есть значения  */
     if (savedMessage) {
 
         /*обновляем dom - текст остается после перезагрузки если форма не отправлена*/
-        body.classList.add(storage.theme);
-        switchBtn.checked = storage.checkbox;
+        checkBodyTheme.add(storage.theme);
+
+        if (storage.theme == "dark-theme") {
+            switchBtn.checked = true;
+            return;
+        }
+        switchBtn.checked = false;
     }
 };
+
+
